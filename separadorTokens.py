@@ -89,6 +89,10 @@ class Automato:
 
     
     def consomeChar(self, caracter):
+        #print('-----')
+        #for i in self.estadoAtual.listaTransicoesNoGrafo:
+         #   print(i, end=", ")
+          #  print()
         for transicao in self.estadoAtual.listaTransicoesNoGrafo:
             if re.search(transicao.charConsumir, caracter):
                 self.estadoAtual = transicao.estadoFinal
@@ -124,6 +128,7 @@ class AnalisadorLexico:
             conteudo = file.read()
             conteudo = conteudo.replace("\r", " ")
             conteudo = conteudo.replace("\n", " ")
+            conteudo = conteudo.replace(chr(9), " ")
             self.conteudoCompilar = conteudo
 
 
@@ -162,7 +167,7 @@ class AnalisadorLexico:
         automato.adicionaTransicao(
             automato.estado_1.gerarTransicao(
                 automato.estado_3, 
-                "[1-9]",
+                "[0-9]",
                 self.incrementarToken
             )
         )
@@ -322,8 +327,13 @@ if __name__ == "__main__":
     analisador = AnalisadorLexico()
     analisador.carregaListaCaracteresEspeciais("specialTokens.json")
     analisador.carregaListaPalavrasChave("keywords.json")
-    analisador.carregaArquivoCompilar("program.c")
+    #analisador.carregaArquivoCompilar("samples/Jogo de Boca.cpp")
+    analisador.carregaArquivoCompilar("samples/program.c")
+    #analisador.carregaArquivoCompilar("samples/Cliente.java")
     analisador.constroiAutomato()
     analisador.parsearTokens()
     print(analisador.listaTokens)
 
+# Todo: Tratar Aspas e Strings
+# Todo: Tratar comentarios
+# tratar numero linha e coluna
