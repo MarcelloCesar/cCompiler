@@ -1,7 +1,7 @@
 import re
 import json
 class Estado:
-
+    
     def __init__(self, nomeEstado, final=False):
         self.nome  = nomeEstado
         self.final = final
@@ -106,6 +106,24 @@ class Automato:
             ". Caracter Lido: '" + caracter + "', #" + str(ord(caracter)) + "."
         )
 
+class Token:
+
+    def __init__(self, valor, tipoToken):
+        self.valor = valor
+        self.tipo  = tipoToken
+
+
+    def __str__(self):        
+        return "<" + self.valor + ', ' + self.tipo + ">"
+
+
+    def __eq__(self, token):
+        return str(token) == self.__str__()
+
+    
+    def __repr__(self):
+        return self.__str__()
+
     
 class AnalisadorLexico:
 
@@ -125,11 +143,8 @@ class AnalisadorLexico:
     
     def carregaArquivoCompilar(self, path):
         with open(path, "r") as file:
-            conteudo = file.read()
-            conteudo = conteudo.replace("\r", " ")
-            conteudo = conteudo.replace("\n", " ")
-            conteudo = conteudo.replace(chr(9), " ")
-            self.conteudoCompilar = conteudo
+            linhasArquivo = file.readlines()
+            self.linhasArquivoCompilar = linhasArquivo
 
 
     def constroiAutomato(self):
@@ -140,6 +155,8 @@ class AnalisadorLexico:
         automato.adicionaEstado(Estado('3'))
         automato.adicionaEstado(Estado('4'))
         automato.adicionaEstado(Estado('5'))
+        automato.adicionaEstado(Estado('6'))
+        automato.adicionaEstado(Estado('7'))
 
         automato.adicionaTransicao(
             automato.estado_1.gerarTransicao(
@@ -170,6 +187,22 @@ class AnalisadorLexico:
                 "[0-9]",
                 self.incrementarToken
             )
+        )
+
+        automato.adicionaTransicao(
+            automato.estado_1.gerarTransicao(
+                automato.estado_6,
+                "[\']",
+                self.incrementarToken
+            )
+        )        
+
+        automato.adicionaTransicao(
+           automato.estado_1.gerarTransicao(
+               automato.estado_7,
+               "[\"]",
+               self.incrementarToken
+           )
         )
         
         automato.adicionaTransicao(
@@ -281,6 +314,38 @@ class AnalisadorLexico:
                 self.erroLexico
             )
         )
+
+        automato.adicionaTransicao(
+            automato.estado_6.gerarTransicao(
+                automato.estado_6,
+                "[^\']",
+                self.incrementarToken
+            )
+        )
+
+        automato.adicionaTransicao(
+            automato.estado_6.gerarTransicao(
+                automato.estado_1,
+                "'",
+                self.criarToken
+            )
+        )
+
+        automato.adicionaTransicao(
+            automato.estado_7.gerarTransicao(
+                automato.estado_7,
+                "[^\"]",
+                self.incrementarToken
+            )
+        )
+
+        automato.adicionaTransicao(
+            automato.estado_7.gerarTransicao(
+                automato.estado_1,
+                "[\"]",
+                self.criarToken
+            )
+        )
         
         automato.defineEstadoInicial(automato.estado_1)
         automato.reinicializar()
@@ -293,10 +358,21 @@ class AnalisadorLexico:
     
     def parsearTokens(self):
         self.stringTokenAtual = ''
-        self.listaTokens      = list()        
-        for caracter in self.conteudoCompilar:
-            self.charLidoAtual = caracter
-            self.lerCaracter(caracter)
+        self.listaTokens      = list()   
+        self.contLinha        = 1
+        self.contColuna       = 1
+
+        for linha in self.linhasArquivoCompilar: 
+            linha = linha.replace(chr(9), '')
+            linha = linha.replace(chr(10), '')
+            self.contColuna       = 1     
+            for caracter in linha:
+                self.charLidoAtual = caracter
+                self.lerCaracter(caracter)
+
+                self.contColuna += self.contColuna
+
+            self.contLinha += 1
 
 
     
@@ -305,7 +381,14 @@ class AnalisadorLexico:
 
     
     def finalizarToken(self):
-        self.listaTokens.append(self.stringTokenAtual)        
+        if self.stringTokenAtual in self.listaCaracteresEspeciais:
+            tipoToken = 'caracterEspecial'
+        elif self.stringTokenAtual in self.listaPalavrasChave:
+            tipoToken = 'palavrachave'
+        else:
+            tipoToken = 'identificador'
+
+        self.listaTokens.append(Token(self.stringTokenAtual, tipoToken))        
         self.stringTokenAtual = ''
         
 
@@ -318,22 +401,24 @@ class AnalisadorLexico:
         self.finalizarToken()
         self.criarToken()
 
-
+    
     def erroLexico(self):
-        raise Exception("Caracter inexperado: ", self.charLidoAtual)
+        raise Exception(
+            "Caracter inexperado: " +  self.charLidoAtual + 
+            ". Linha: "  + str(self.contLinha) + 
+            ", Coluna: " + str(self.contColuna) + '.'
+        )
 
 
 if __name__ == "__main__":
     analisador = AnalisadorLexico()
     analisador.carregaListaCaracteresEspeciais("specialTokens.json")
     analisador.carregaListaPalavrasChave("keywords.json")
-    #analisador.carregaArquivoCompilar("samples/Jogo de Boca.cpp")
-    analisador.carregaArquivoCompilar("samples/program.c")
+    analisador.carregaArquivoCompilar("samples/Jogo de Boca.cpp")
+    #analisador.carregaArquivoCompilar("samples/program.c")
     #analisador.carregaArquivoCompilar("samples/Cliente.java")
+    #analisador.carregaArquivoCompilar("samples/simple.cpp")
+    #analisador.carregaArquivoCompilar("samples/simple.txt")
     analisador.constroiAutomato()
     analisador.parsearTokens()
     print(analisador.listaTokens)
-
-# Todo: Tratar Aspas e Strings
-# Todo: Tratar comentarios
-# tratar numero linha e coluna
