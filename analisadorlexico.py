@@ -114,6 +114,7 @@ class Token:
 
 
     def __str__(self):        
+        return self.valor
         return "<" + self.valor + ', ' + self.tipo + ">"
 
 
