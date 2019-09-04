@@ -375,6 +375,8 @@ class AnalisadorLexico:
 
             self.contLinha += 1
 
+        if self.stringTokenAtual != '':
+            self.finalizarToken()
 
     
     def incrementarToken(self):
@@ -415,8 +417,9 @@ if __name__ == "__main__":
     analisador = AnalisadorLexico()
     analisador.carregaListaCaracteresEspeciais("specialTokens.json")
     analisador.carregaListaPalavrasChave("keywords.json")
-    analisador.carregaArquivoCompilar("samples/Jogo de Boca.cpp")
-    #analisador.carregaArquivoCompilar("samples/program.c")
+    #analisador.carregaArquivoCompilar("samples/Jogo de Boca.cpp")
+    #analisador.carregaArquivoCompilar("samples/input.txt")
+    analisador.carregaArquivoCompilar("samples/program.c")
     #analisador.carregaArquivoCompilar("samples/Cliente.java")
     #analisador.carregaArquivoCompilar("samples/simple.cpp")
     #analisador.carregaArquivoCompilar("samples/simple.txt")

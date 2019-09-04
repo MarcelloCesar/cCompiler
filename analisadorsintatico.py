@@ -151,10 +151,7 @@ class AnalisadorSintatico:
 
 
     def analisar(self):
-        self.extrairTokens("samples/input.txt")
-
-        # VERIFICAR PQ NAO ESTA EXTRAINDO O ULTIMO TOKEN, ADICIONADO TEMPORARIAMENTE PAR ATESTAR
-        self.fluxoTokens.append(Token("id", '?'))
+        self.extrairTokens("samples/input.txt")          
 
         self.fluxoTokens.append(Terminal('$'))
 
