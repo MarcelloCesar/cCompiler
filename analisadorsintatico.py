@@ -16,7 +16,7 @@ class Variavel:
 
 
 class Terminal:
-    
+
     def __init__(self, representacao):
         self.representacao = representacao
 
@@ -26,14 +26,14 @@ class Terminal:
 
 
     def __repr__(self):
-        return self.__str__()    
+        return self.__str__()
 
 
 class RegraProducao:
 
     def __init__(self, regraInicial, regrasGeradas):
         self.regraInicial  = regraInicial
-        self.regrasGeradas = regrasGeradas      
+        self.regrasGeradas = regrasGeradas
 
 
     def __str__(self):
@@ -43,7 +43,7 @@ class RegraProducao:
     def __repr__(self):
         return self.__str__()
 
-    
+
     def copy(self):
         return RegraProducao(
             self.regraInicial,
@@ -56,7 +56,7 @@ class AnalisadorSintatico:
     def __init__(self):
         self.tabelaTransicao = {}
 
-    
+
     def construirTabelaTransicao(self):
         tabelaTransicao = self.tabelaTransicao
 
@@ -97,7 +97,7 @@ class AnalisadorSintatico:
         regra1 = RegraProducao(E, [T, S])
         self.producaoInicial = regra1
 
-        regra2 = RegraProducao(T, [F, G])        
+        regra2 = RegraProducao(T, [F, G])
         regra3 = RegraProducao(S, [add, T, S])
         regra4 = RegraProducao(S, [sub, T, S])
         regra5 = RegraProducao(S, [vazio])
@@ -111,7 +111,7 @@ class AnalisadorSintatico:
         # Monta a tabela em si
         tabelaTransicao[E] = {}
         tabelaTransicao[E][id.__str__()] = regra1
-        tabelaTransicao[E][num.__str__()] = regra2
+        tabelaTransicao[E][num.__str__()] = regra1
         tabelaTransicao[E][abre.__str__()] = regra1
 
         tabelaTransicao[T] = {}
@@ -146,54 +146,63 @@ class AnalisadorSintatico:
         analisador.carregaArquivoCompilar(arquivo)
         analisador.constroiAutomato()
         analisador.parsearTokens()
-        
+
         self.fluxoTokens = analisador.listaTokens
 
 
     def analisar(self):
-        self.extrairTokens("samples/input.txt")          
+        self.extrairTokens("samples/input_correto.txt")
+        #self.extrairTokens("samples/input_incorreto.txt")
 
         self.fluxoTokens.append(Terminal('$'))
 
         self.solucao = []
         self.pilha   = ['$', self.variavelInicial]
-        self.producaoAtual = self.producaoInicial        
+        self.producaoAtual = self.producaoInicial
 
         # Adiciona a linha da solicao inicial
         self.adicionaSolucao()
         # inicio algoritmo
-        while self.fluxoTokens.__len__() > 1 or self.pilha.__len__() > 1:  
-            try:                      
+        while self.fluxoTokens.__len__() > 1 or self.pilha.__len__() > 1:
+            try:
                 if type(self.pilha[-1]) == Terminal and str(self.pilha[-1]) == str(self.pilha[-1]):#Rever isso, e se for uma variavel E no fonte em C? v- ver se colocando Terminal como coloquei ja resolve
-                    # consome a pilha e o token                
+                    # consome a pilha e o token
                     if self.pilha.__len__() > 1:
                         self.pilha.pop()
 
-                    if self.fluxoTokens.__len__() > 1:                
+                    if self.fluxoTokens.__len__() > 1:
                         self.fluxoTokens.pop(0)
 
                     self.producaoAtual = '----'
 
-                else:                    
+                else:
                     self.producaoAtual = self.tabelaTransicao[self.pilha[-1]][str(self.fluxoTokens[0])].copy()
                     producaoAdicionarPilha = self.producaoAtual.regrasGeradas.copy()
                     producaoAdicionarPilha.reverse()
-                        
+
                     self.pilha.pop()
 
                     for regra in producaoAdicionarPilha:
-                        if regra not in self.pilha and \
-                           regra.__str__() != '$':
-                            self.pilha.append(regra)  
+                        # if regra not in self.pilha and \
+                         if \
+                           regra.__str__() != '$': # Rever este if
+                            self.pilha.append(regra)
 
 
                 self.adicionaSolucao()
+                naoReconhece = False
             except Exception as exc:
-                raise exc
+                naoReconhece = True
+                break
 
         self.printaSolucao()
-                
-    
+
+        if naoReconhece:
+            print ("NAO RECONHECE")
+        else:
+            print("RECONHECE")
+
+
     def adicionaSolucao(self):
         self.solucao.append([
             self.pilha.copy(),
@@ -201,7 +210,7 @@ class AnalisadorSintatico:
             self.producaoAtual
         ])
 
-    
+
     def printaSolucao(self):
         for i in range(self.solucao.__len__()):
             try:
@@ -214,6 +223,6 @@ class AnalisadorSintatico:
 
 if __name__ == '__main__':
     analisador = AnalisadorSintatico()
-    analisador.construirTabelaTransicao()   
+    analisador.construirTabelaTransicao()
     analisador.analisar()
 
