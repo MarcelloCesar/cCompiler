@@ -108,9 +108,10 @@ class Automato:
 
 class Token:
 
-    def __init__(self, valor, tipoToken):
+    def __init__(self, valor, tipoToken, linha):
         self.valor = valor
         self.tipo  = tipoToken
+        self.linha = linha
 
 
     def __str__(self):
@@ -397,10 +398,12 @@ class AnalisadorLexico:
             tipoToken = 'caracterEspecial'
         elif self.stringTokenAtual in self.listaPalavrasChave:
             tipoToken = 'palavrachave'
+        elif self.stringTokenAtual.isnumeric():
+            tipoToken = 'constante'
         else:
             tipoToken = 'identificador'
 
-        self.listaTokens.append(Token(self.stringTokenAtual, tipoToken))
+        self.listaTokens.append(Token(self.stringTokenAtual, tipoToken, self.contLinha))
         self.stringTokenAtual = ''
 
 
