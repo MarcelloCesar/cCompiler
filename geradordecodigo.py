@@ -70,8 +70,8 @@ class GeradorDeCodigo:
         listaRetorno = list()
         listaRetorno.append('LEIT')
         try:
-            # listaRetorno.append('ARMZ ' + str(self.listaIdentificadores.index(str(token))))
-            listaRetorno.append('ARMZ ' + str(token))
+            listaRetorno.append('ARMZ ' + str(self.listaIdentificadores.index(str(token))))
+            # listaRetorno.append('ARMZ ' + str(token))
         except ValueError:
             raise Exception('Identificador ' + str(token) + ' inexistente')
 
@@ -83,8 +83,8 @@ class GeradorDeCodigo:
             pass
 
         instrucoes = self.expressao_function()
-        instrucoes.append('ARMZ ' + str(token))
-        # instrucoes.append('ARMZ ' + str(self.listaIdentificadores.index(str(token))))
+        # instrucoes.append('ARMZ ' + str(token))
+        instrucoes.append('ARMZ ' + str(self.listaIdentificadores.index(str(token))))
         return instrucoes
 
 
@@ -99,8 +99,8 @@ class GeradorDeCodigo:
                 instrucoes.append('CRCT ' + str(token))
 
             elif token.tipo == 'identificador':
-                # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(token))))
-                instrucoes.append('CRVL ' + str(token))
+                instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(token))))
+                # instrucoes.append('CRVL ' + str(token))
 
             elif str(token) == '+':
                 proximoToken = self.fluxoTokens.pop(0)
@@ -110,8 +110,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
-                    instrucoes.append('CRVL ' + str(proximoToken))
+                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append('SOMA')
 
@@ -123,8 +123,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
-                    instrucoes.append('CRVL ' + str(proximoToken))
+                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append('SUBT')
 
@@ -136,8 +136,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
-                    instrucoes.append('CRVL ' + str(proximoToken))
+                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append('DIVI')
 
@@ -149,8 +149,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
-                    instrucoes.append('CRVL ' +str(proximoToken))
+                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' +str(proximoToken))
 
                 instrucoes.append('MULT')
 
@@ -168,8 +168,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
-                    instrucoes.append('CRVL ' + str(proximoToken))
+                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append(codInstrucao)
 
@@ -187,8 +187,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
-                    instrucoes.append('CRVL ' + str(proximoToken))
+                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append(codInstrucao)
 
@@ -206,8 +206,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
-                    instrucoes.append('CRVL ' + str(proximoToken))
+                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append(codInstrucao)
 
@@ -225,8 +225,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
-                    instrucoes.append('CRVL ' + str(proximoToken))
+                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append(codInstrucao)
 
@@ -244,8 +244,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
-                    instrucoes.append('CRVL ' + str(proximoToken))
+                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append(codInstrucao)
 
@@ -263,8 +263,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
-                    instrucoes.append('CRVL ' + str(proximoToken))
+                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append(codInstrucao)
 
