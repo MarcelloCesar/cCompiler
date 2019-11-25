@@ -4,19 +4,22 @@ class GeradorDeCodigo:
     def __init__(self):
         self.fluxoTokens = list()
         self.listaIdentificadores = list()
+        self.contLabel = 1
         self.tradutorAcoes = {
             'main' : self.main_function,
             'int': self.int_function,
             'scanf': self.leit_function,
             'atribuicao': self.atribuicao_funtion,
-            'printf': self.print_function
+            'printf': self.print_function,
+            'if': self.cond_function,
+            'while' : self.loop_function,
         }
 
 
     def carregar_codigo_fonte(self, caminho):
         analisador = analisadorlexico.AnalisadorLexico()
-        analisador.carregaListaCaracteresEspeciais("specialTokens.json")
-        analisador.carregaListaPalavrasChave("keywords.json")
+        analisador.carregaListaCaracteresEspeciais(r"C:\Users\user\Desktop\5 Semestre\Compiladores\Trabalhos\Compilador\specialTokens.json")
+        analisador.carregaListaPalavrasChave(r"C:\Users\user\Desktop\5 Semestre\Compiladores\Trabalhos\Compilador\keywords.json")
         analisador.carregaArquivoCompilar(caminho)
         analisador.constroiAutomato()
         analisador.parsearTokens()
@@ -67,7 +70,8 @@ class GeradorDeCodigo:
         listaRetorno = list()
         listaRetorno.append('LEIT')
         try:
-            listaRetorno.append('ARMZ ' + str(self.listaIdentificadores.index(str(token))))
+            # listaRetorno.append('ARMZ ' + str(self.listaIdentificadores.index(str(token))))
+            listaRetorno.append('ARMZ ' + str(token))
         except ValueError:
             raise Exception('Identificador ' + str(token) + ' inexistente')
 
@@ -79,7 +83,8 @@ class GeradorDeCodigo:
             pass
 
         instrucoes = self.expressao_function()
-        instrucoes.append('ARMZ ' + str(self.listaIdentificadores.index(str(token))))
+        instrucoes.append('ARMZ ' + str(token))
+        # instrucoes.append('ARMZ ' + str(self.listaIdentificadores.index(str(token))))
         return instrucoes
 
 
@@ -94,7 +99,8 @@ class GeradorDeCodigo:
                 instrucoes.append('CRCT ' + str(token))
 
             elif token.tipo == 'identificador':
-                instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(token))))
+                # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(token))))
+                instrucoes.append('CRVL ' + str(token))
 
             elif str(token) == '+':
                 proximoToken = self.fluxoTokens.pop(0)
@@ -104,7 +110,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append('SOMA')
 
@@ -116,7 +123,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append('SUBT')
 
@@ -128,7 +136,8 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    instrucoes.append('CRVL ' + str(proximoToken))
 
                 instrucoes.append('DIVI')
 
@@ -140,9 +149,124 @@ class GeradorDeCodigo:
                     instrucoes.append('CRCT ' + str(proximoToken))
 
                 elif proximoToken.tipo == 'identificador':
-                    instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    instrucoes.append('CRVL ' +str(proximoToken))
 
                 instrucoes.append('MULT')
+
+            elif str(token) == '>':
+                proximoToken = self.fluxoTokens.pop(0)
+
+                codInstrucao = 'CMMA'
+                # Se for >= , remove mais um token
+                if proximoToken == '=':
+                    proximoToken = self.fluxoTokens.pop(0)
+                    codInstrucao = 'CMAG'
+
+                # Verifica se o proixmo token é constante ou identificador
+                if proximoToken.tipo == 'constante':
+                    instrucoes.append('CRCT ' + str(proximoToken))
+
+                elif proximoToken.tipo == 'identificador':
+                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    instrucoes.append('CRVL ' + str(proximoToken))
+
+                instrucoes.append(codInstrucao)
+
+            elif str(token) == '<':
+                proximoToken = self.fluxoTokens.pop(0)
+
+                codInstrucao = 'CMME'
+                # Se for <= , remove mais um token
+                if proximoToken == '=':
+                    proximoToken = self.fluxoTokens.pop(0)
+                    codInstrucao = 'CMEG'
+
+                # Verifica se o proixmo token é constante ou identificador
+                if proximoToken.tipo == 'constante':
+                    instrucoes.append('CRCT ' + str(proximoToken))
+
+                elif proximoToken.tipo == 'identificador':
+                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    instrucoes.append('CRVL ' + str(proximoToken))
+
+                instrucoes.append(codInstrucao)
+
+            elif str(token) == '=':
+                proximoToken = self.fluxoTokens.pop(0)
+
+                codInstrucao = 'CCC'
+                # Se for == , remove mais um token
+                if proximoToken == '=':
+                    proximoToken = self.fluxoTokens.pop(0)
+                    codInstrucao = 'CMIG'
+
+                # Verifica se o proixmo token é constante ou identificador
+                if proximoToken.tipo == 'constante':
+                    instrucoes.append('CRCT ' + str(proximoToken))
+
+                elif proximoToken.tipo == 'identificador':
+                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    instrucoes.append('CRVL ' + str(proximoToken))
+
+                instrucoes.append(codInstrucao)
+
+            elif str(token) == '!':
+                proximoToken = self.fluxoTokens.pop(0)
+
+                codInstrucao = 'CCC'
+                # Se for == , remove mais um token
+                if proximoToken == '=':
+                    proximoToken = self.fluxoTokens.pop(0)
+                    codInstrucao = 'CMDG'
+
+                # Verifica se o proixmo token é constante ou identificador
+                if proximoToken.tipo == 'constante':
+                    instrucoes.append('CRCT ' + str(proximoToken))
+
+                elif proximoToken.tipo == 'identificador':
+                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    instrucoes.append('CRVL ' + str(proximoToken))
+
+                instrucoes.append(codInstrucao)
+
+            elif str(token) == '&':
+                proximoToken = self.fluxoTokens.pop(0)
+
+                codInstrucao = 'CCC'
+                # Se for == , remove mais um token
+                if proximoToken == '&':
+                    proximoToken = self.fluxoTokens.pop(0)
+                    codInstrucao = 'CONJ'
+
+                # Verifica se o proixmo token é constante ou identificador
+                if proximoToken.tipo == 'constante':
+                    instrucoes.append('CRCT ' + str(proximoToken))
+
+                elif proximoToken.tipo == 'identificador':
+                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    instrucoes.append('CRVL ' + str(proximoToken))
+
+                instrucoes.append(codInstrucao)
+
+            elif str(token) == '|':
+                proximoToken = self.fluxoTokens.pop(0)
+
+                codInstrucao = 'CCC'
+                # Se for == , remove mais um token
+                if proximoToken == '|':
+                    proximoToken = self.fluxoTokens.pop(0)
+                    codInstrucao = 'DISJ'
+
+                # Verifica se o proixmo token é constante ou identificador
+                if proximoToken.tipo == 'constante':
+                    instrucoes.append('CRCT ' + str(proximoToken))
+
+                elif proximoToken.tipo == 'identificador':
+                    # instrucoes.append('CRVL ' + str(self.listaIdentificadores.index(str(proximoToken))))
+                    instrucoes.append('CRVL ' + str(proximoToken))
+
+                instrucoes.append(codInstrucao)
 
             elif str(token) in [',', ';', ')']:
                 break
@@ -170,19 +294,145 @@ class GeradorDeCodigo:
 
         return instrucoes
 
+
+    def cond_function(self):
+        # Recupera a primeira etapa do if que é a condicao
+        while self.fluxoTokens.pop(0) != '(':
+            pass
+
+        listaInstrucoes = list()
+        # Realiza a leitura da expressao
+        listaInstrucoes += self.expressao_function()
+        # Armazena uma label para o salto caso a intrucao seja false
+        labelIF = self.get_next_label()
+        # Apos a expressao armazena o pulo para a label
+        listaInstrucoes.append("DSVF " + labelIF)
+
+        # Verifica se proximo caracter é }
+        if self.fluxoTokens[0] == '{':
+            # Remove o caracter '{'
+            self.fluxoTokens.pop(0)
+
+            #  Aguarda o caracter '}'
+            while self.fluxoTokens[0] != '}':
+                # processa a intrucao dentro do if
+                listaInstrucoes += self.processa_instrucao()
+
+            # Remove o caracter '}'
+            self.fluxoTokens.pop(0)
+
+        else :
+            # processa somente uma instrucao
+            listaInstrucoes += self.processa_instrucao()
+
+
+        # verifica se a proxima instrucao é um else
+        if str(self.fluxoTokens[0]) == 'else':
+
+            # Cria uma label para o else
+            labelENDIF = self.get_next_label()
+
+            # Adiciona a instrucao para pular o if pular o else
+            listaInstrucoes.append("DSVS " + labelENDIF)
+
+            # Apos o processamento da instrucao adiciona o label do pulo
+            listaInstrucoes.append(labelIF)
+
+            # Remove o else
+            self.fluxoTokens.pop(0)
+
+            # Verifica se proximo caracter é }
+            if self.fluxoTokens[0] == '{':
+                # Remove o caracter '{'
+                self.fluxoTokens.pop(0)
+
+                #  Aguarda o caracter '}'
+                while self.fluxoTokens[0] != '}':
+                    # processa a intrucao dentro do if
+                    listaInstrucoes += self.processa_instrucao()
+
+                # Remove o caracter '}'
+                self.fluxoTokens.pop(0)
+
+            else :
+                # processa somente uma instrucao
+                listaInstrucoes += self.processa_instrucao()
+
+            # infaliza o else
+            listaInstrucoes.append(labelENDIF)
+        else :
+            # Adiciona a label do endif
+            listaInstrucoes.append(labelIF)
+
+        return listaInstrucoes
+
+
+    def loop_function(self):
+        labelWhile = self.get_next_label()
+        listaInstrucoes = [labelWhile]
+
+        # Recupera a primeira etapa do while que é a condicao
+        while self.fluxoTokens.pop(0) != '(':
+            pass
+
+        # Realiza a leitura da expressao
+        listaInstrucoes += self.expressao_function()
+
+        # Recupera uma label para o endwhile
+        labelEndWhile = self.get_next_label()
+
+        # insere a label da expressao do fim do while
+        listaInstrucoes.append('DSVF ' + labelEndWhile)
+
+        # Verifica se proximo caracter é }
+        if self.fluxoTokens[0] == '{':
+            # Remove o caracter '{'
+            self.fluxoTokens.pop(0)
+
+            #  Aguarda o caracter '}'
+            while self.fluxoTokens[0] != '}':
+                # processa a intrucao dentro do if
+                listaInstrucoes += self.processa_instrucao()
+
+            # Remove o caracter '}'
+            self.fluxoTokens.pop(0)
+
+        else :
+            # processa somente uma instrucao
+            listaInstrucoes += self.processa_instrucao()
+
+        listaInstrucoes.append('DSVS ' + labelWhile)
+        listaInstrucoes.append(labelEndWhile)
+
+        return listaInstrucoes
+
+
+    def get_next_label(self):
+        label = 'L' + str(self.contLabel)
+        self.contLabel += 1
+        return label
+
+
     def traduzir(self):
         self.listaInstrucoes = list()
         # Percorre cada token do fluxo
         while len(self.fluxoTokens) > 0:
-            try:
-                # Recupera o token atual
-                token = self.fluxoTokens.pop(0)
+            self.listaInstrucoes += self.processa_instrucao()
 
-                # Executa o procedimento de tratamento do token
-                self.listaInstrucoes += self.tradutorAcoes[str(token)]()
-            except KeyError:
-                if token.tipo == 'identificador':
-                    self.listaInstrucoes += self.tradutorAcoes['atribuicao'](token)
+
+    def processa_instrucao(self):
+        listaInstrucoes = list()
+            # Recupera o token atual
+        try:
+            token = self.fluxoTokens.pop(0)
+
+            # Executa o procedimento de tratamento do token
+            listaInstrucoes += self.tradutorAcoes[str(token)]()
+        except KeyError:
+            if token.tipo == 'identificador':
+                listaInstrucoes += self.tradutorAcoes['atribuicao'](token)
+
+        return listaInstrucoes
 
 
     def printa_resultado(self):
@@ -202,7 +452,7 @@ class GeradorDeCodigo:
 
 if __name__ == '__main__':
     gerador = GeradorDeCodigo()
-    gerador.carregar_codigo_fonte('samples/input_gerador.cpp')
+    gerador.carregar_codigo_fonte(r'C:\Users\user\Desktop\5 Semestre\Compiladores\Trabalhos\Compilador\samples\input_gerador.cpp')
     # print(gerador.fluxoTokens)
     gerador.traduzir()
     gerador.printa_resultado()

@@ -1,11 +1,16 @@
 #include <stdio.h>
 
-main(){
-    int a, c;
+main() {
+ int n, k, f1,f2, f3;
 
-    scanf("%d", &a);
-    c = a *2;
-    printf("%d %d", a, c);
-
-
+	scanf('%d', &n);
+	f1=0; f2=1; k=1;
+	while (k<= n )
+	{
+		f3 =f1+f2;
+		f1 =f2;
+		f2 =f3;
+		k =k+1;
+	}
+	printf ('%d %d',n, f1);
 }
